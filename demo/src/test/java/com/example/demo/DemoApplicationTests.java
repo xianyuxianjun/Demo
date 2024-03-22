@@ -11,7 +11,8 @@ class DemoApplicationTests {
 	private userMapper um;
 	@Test
 	void contextLoads() {
-		System.out.println(um.selectAll());
+		System.out.println(um.selectOne("赵雷"));
+
 	}
 
 }

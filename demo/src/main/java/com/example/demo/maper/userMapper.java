@@ -10,4 +10,6 @@ import java.util.List;
 public interface userMapper {
     @Select("select * from student")
     List<student> selectAll();
+    @Select("select * from student where sname=#{sname}")
+    student selectOne(String sname);
 }
