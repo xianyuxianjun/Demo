@@ -1,15 +1,10 @@
 package com.example.demo.maper;
 
-import com.example.demo.Pojo.student;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.demo.Pojo.Student;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-
-import java.util.List;
 
 @Mapper
-public interface userMapper {
-    @Select("select * from student")
-    List<student> selectAll();
-    @Select("select * from student where sname=#{sname}")
-    student selectOne(String sname);
+public interface userMapper extends BaseMapper<Student> {
+
 }
