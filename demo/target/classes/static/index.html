@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+    <style>
+        .cent{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+        }
+
+        .box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<body>
+<div id="app" class="cent">
+    <div class="box Login">
+        <h1>登录</h1>
+        <p>姓名：</p>
+        <input type="text" v-model="student.studentName"><br>
+        <p>密码：</p>
+        <input type="password" v-model="student.password">
+        <button @click="login">登录</button>
+    </div>
+    <div class="box addStudent">
+        <h1>注册</h1>
+        <p>姓名：</p>
+        <input type="text" v-model="newStudent.studentName"><br>
+        <p>密码：</p>
+        <input type="password" v-model="newStudent.password">
+        <button @click="addStudent">注册</button>
+    </div>
+    <div class="box select">
+        <p>请输入您要查询的学生名字</p>
+        <input type="text" v-model="selectName">
+        <button @click="selectStudent">查询</button>
+        <h2>该学生的信息如下</h2>
+        <p>姓名：{{studentInfo.studentName}}</p>
+        <p>学号：{{studentInfo.studentId}}</p>
+        <p>密码：{{studentInfo.password}}</p>
+        <p>年龄：{{studentInfo.age}}</p>
+        <p>性别：{{studentInfo.gender}}</p>
+        <p>专业：{{studentInfo.major}}</p>
+    </div>
+    <div class="box update">
+        <h1>请输入你要修改的信息</h1>
+        <p>您的姓名：</p>
+        <input type="text" v-model="updatedStudent.studentName">
+        <p>密码：</p>
+        <input type="text" v-model="updatedStudent.password">
+        <p>年龄：</p>
+        <input type="text" v-model="updatedStudent.age">
+        <p>性别：</p>
+        <input type="text" v-model="updatedStudent.gender">
+        <p>专业：</p>
+        <input type="text" v-model="updatedStudent.major">
+        <button @click="updateInfo">修改</button>
+    </div>
+    <div class="box delete">
+         <h1>删除学生</h1>
+         <p>请输入你要删除的学生名字</p>
+        <input type="text" v-model="delectName">
+        <button @click="delectStudent">删除</button>
+    </div>
+    <div class="box select">
+        <h1>根据班级查询学生</h1>
+        <p>请输入你要查询的班级</p>
+        <input type="text" v-model="selectMajor">
+        <button @click="selectClass">查询</button>
+        <div v-for="student in studentList">
+            p>姓名：{{ student.studentName }}</p>
+            <p>学号：{{ student.studentId }}</p>
+            <p>密码：{{ student.password }}</p>
+            <p>年龄：{{ student.age }}</p>
+            <p>性别：{{ student.gender }}</p>
+            <p>专业：{{ student.major }}</p>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            selectMajor:'',
+            studentList:[],
+            student:{
+                studentName:'',
+                studentId:'',
+                password:'',
+                age:'',
+                gender:'',
+                major:''
+            },
+            newStudent:{
+                studentName:'',
+                studentId:'',
+                password:'',
+                age:'',
+                gender:'',
+                major:''
+            },
+            updatedStudent:{
+                studentName:'',
+                studentId:'',
+                password:'',
+                age:'',
+                gender:'',
+                major:''
+            },
+            studentInfo:{
+                studentName:'',
+                studentId:'',
+                password:'',
+                age:'',
+                gender:'',
+                major:''
+            },
+            selectName:'',
+            delectName:''
+        },
+        methods:{
+            //登录
+            login(){
+                axios.post("http://localhost:8080/users/Login",this.student)
+                    .then(res =>{
+                        if (res.data.code==1){
+                            alert("登录成功")
+                        }else{
+                            alert("登录失败")
+                            this.student.studentName = ''
+                            this.student.password = ''
+                        }
+                })
+            },
+
+            //注册
+            addStudent(){
+                axios.post("http://localhost:8080/users/addStudent",this.newStudent)
+                    .then(res =>{
+                        if (res.data.code==1){
+                            alert("注册成功")
+                        }else{
+                            alert("注册失败")
+                        }
+                    })
+            },
+
+            //查询个人信息
+            selectStudent(){
+                axios.get("http://localhost:8080/users/selectOne?studentName="+this.selectName)
+                    .then(res =>{
+                        if(res.data.code==1){
+                            this.studentInfo=res.data.data
+                        }else{
+                            alert("查询失败")
+                        }
+                    })
+            },
+
+            //修改个人信息
+            updateInfo(){
+                axios.put("http://localhost:8080/users/changeStudent",this.updatedStudent)
+                    .then(res =>{
+                        if (res.data.code==1){
+                            alert("修改成功")
+                        }else {
+                            alert("修改失败")
+                        }
+                    })
+            },
+            //删除
+            delectStudent(){
+                axios.delete("http://localhost:8080/users/delectStudet?studentName="+this.delectName)
+                    .then(res=>{
+                        alert("删除成功")
+                    })
+            },
+            //查询班级
+            selectClass(){
+                axios.get("http://localhost:8080/users/select?major="+this.selectMajor)
+                    .then(res=>{
+                        this.studentList=res.data.data
+                        console.log(this.studentList)
+                    })
+            }
+        }
+    })
+</script>
+</html>
